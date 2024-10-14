@@ -14,7 +14,7 @@ Build
 **/assets/miaximo
 **/assets/MilitaryWeapSilver
 **/assets/ThirdPerson
-
+.vsconfig
 .vscode
 .vs
 *.VC.db
