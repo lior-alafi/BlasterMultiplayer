@@ -5,6 +5,7 @@
 #include  "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/WidgetComponent.h" // for overhead
 
 // Sets default values
 ABlasterCharacter::ABlasterCharacter()
@@ -24,15 +25,20 @@ ABlasterCharacter::ABlasterCharacter()
 	//already attached to spring arm that follows rotation
 	FollowCamera->bUsePawnControlRotation = false;
 
-	// these two will stop camera to rotate with the camera
+	// these two will stop camera to rotate with the camera (now allows to rotate around the character)
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	//widget 
+	overheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
+	overheadWidget->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void ABlasterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 

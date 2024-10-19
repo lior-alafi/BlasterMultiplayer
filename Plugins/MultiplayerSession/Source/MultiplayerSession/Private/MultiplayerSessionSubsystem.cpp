@@ -126,7 +126,14 @@ void UMultiplayerSessionSubsystem::CreateSession(int32 numPublicPlayers, FString
 	OnSessCreate_handle = OnlineSession->AddOnCreateSessionCompleteDelegate_Handle(OnSessCreateDelegate);
 	
 	PrepareSessionSettings(numOfPublicAcceptedConnections, MatchType);
-	
+	if (GEngine) {
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.f,
+			FColor::Yellow,
+			FString::Printf(TEXT("hosting %s ..."),*IOnlineSubsystem::Get()->GetSubsystemName().ToString())
+		);
+	}
 	const int32 uniqueId = GetWorld()->GetFirstPlayerController()->GetUniqueID();	
 	if (!OnlineSession->CreateSession(uniqueId, NAME_GameSession, *SessSettings))
 	{
@@ -150,7 +157,14 @@ void UMultiplayerSessionSubsystem::FindSessions(int32 numOfSessionsResults)
 	searchSessSettings = MakeShareable(new FOnlineSessionSearch());
 	searchSessSettings->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
 	searchSessSettings->MaxSearchResults = numOfSessionsResults;
-
+	if (GEngine) {
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.f,
+			FColor::Yellow,
+			FString::Printf(TEXT("finding %s ..."),*IOnlineSubsystem::Get()->GetSubsystemName().ToString())
+		);
+	}
 	/** Search for presence sessions only (because when we created the session we allowed presence */
 	searchSessSettings->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 	if (!OnlineSession->FindSessions(uniqueId, searchSessSettings.ToSharedRef()))
