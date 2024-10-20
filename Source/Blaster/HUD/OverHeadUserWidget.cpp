@@ -4,6 +4,7 @@
 #include "OverHeadUserWidget.h"
 #include "Components/TextBlock.h"
 
+
 void UOverHeadUserWidget::SetOverheadText(FString txt)
 {
 	if (OverheadText)
@@ -14,6 +15,7 @@ void UOverHeadUserWidget::SetOverheadText(FString txt)
 
 void UOverHeadUserWidget::ShowNetworkRole(APawn* inPawn)
 {
+	
 	ENetRole localRole = inPawn->GetLocalRole();
 	FString role;
 	switch (localRole)
@@ -31,9 +33,11 @@ void UOverHeadUserWidget::ShowNetworkRole(APawn* inPawn)
 		role = FString("Authority");
 		break;
 	}
+	
 	FString  text = FString::Printf(TEXT("Local Role: %s"), *role);
 	SetOverheadText(text);
 }
+
 
 void UOverHeadUserWidget::NativeDestruct()
 {

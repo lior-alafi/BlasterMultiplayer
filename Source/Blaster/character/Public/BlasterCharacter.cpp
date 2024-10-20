@@ -6,7 +6,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h" // for overhead
-
+#include "GameFramework/PlayerState.h"
+#include "Blaster/HUD/OverHeadUserWidget.h"
 // Sets default values
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -39,7 +40,6 @@ void ABlasterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
 }
 
 void ABlasterCharacter::MoveForward(float val)

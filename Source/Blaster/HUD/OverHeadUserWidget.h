@@ -18,10 +18,13 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* OverheadText;
 
+
+
 	void SetOverheadText(FString txt);
 
 	UFUNCTION(BlueprintCallable)
 	void ShowNetworkRole(APawn* inPawn);
+
 
 protected:
 	virtual void NativeDestruct() override;
