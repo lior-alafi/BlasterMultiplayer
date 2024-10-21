@@ -21,10 +21,14 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"))
 	class UWidgetComponent* overheadWidget;
 
+	UPROPERTY(Replicated)
+	class AWeapon* OverlappedWeapon;
+
 public:
 	// Sets default values for this character's properties
 	ABlasterCharacter();
 
+	//virtual void R
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -43,5 +47,10 @@ protected:
 
 
 public:	
+	//to register variables replicated 
+	// to do that:
+	//OREPLIFETIME(<currentclass>,<replicated class>)
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	FORCEINLINE void SetOverlappedWeapon(AWeapon* overlappedWeapon) { OverlappedWeapon = overlappedWeapon; }
 };

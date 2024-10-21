@@ -8,6 +8,9 @@
 #include "Components/WidgetComponent.h" // for overhead
 #include "GameFramework/PlayerState.h"
 #include "Blaster/HUD/OverHeadUserWidget.h"
+#include "Net/UnrealNetwork.h"
+#include "Blaster/Weapons/Weapon.h"
+
 // Sets default values
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -77,11 +80,22 @@ void ABlasterCharacter::Turn(float val)
 	AddControllerYawInput(val);
 }
 
+void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	//register replication variable
+	DOREPLIFETIME(ABlasterCharacter, OverlappedWeapon);
+	//DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappedWeapon, COND_OwnerOnly);
+}
+
 // Called every frame
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (OverlappedWeapon)
+	{
+		OverlappedWeapon->ShowPickupWidget(true);
+	}
 }
 
 // Called to bind functionality to input

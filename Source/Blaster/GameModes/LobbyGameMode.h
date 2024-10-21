@@ -18,7 +18,7 @@ class BLASTER_API ALobbyGameMode : public AGameMode
 	int32 TotalNumberOfPlayers;
 	
 protected:
-	int32 NumOfPlayersToStart = 3;
+	int32 NumOfPlayersToStart = 4;
 
 	FString Map{ TEXT("/Game/maps/BlasterMap") };
 public:

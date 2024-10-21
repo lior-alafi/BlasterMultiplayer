@@ -32,7 +32,6 @@ AWeapon::AWeapon()
 
 	pickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupMessage"));
 	pickupWidget->SetupAttachment(SK_Weapon);
-	pickupWidget->SetVisibility(false);
 }
 
 void AWeapon::BeginPlay()
@@ -46,24 +45,29 @@ void AWeapon::BeginPlay()
 		PickupRadius->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 		//register delegates
 		PickupRadius->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::PickupBeginOverlap);
-		PickupRadius->OnComponentEndOverlap.AddDynamic(this, &AWeapon::PickupEndOverlap);
+		//PickupRadius->OnComponentEndOverlap.AddDynamic(this, &AWeapon::PickupEndOverlap);
+	}
+	if (pickupWidget) {
+		pickupWidget->SetVisibility(false);
 	}
 }
 
 void AWeapon::PickupBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	auto character = Cast<ABlasterCharacter>(OtherActor);
-	if (character == nullptr || pickupWidget == nullptr) return;
-
-	pickupWidget->SetVisibility(true);
+	if (character == nullptr) return;
+	
+	character->SetOverlappedWeapon(this);
 }
 
 void AWeapon::PickupEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	auto character = Cast<ABlasterCharacter>(OtherActor);
-	if (character == nullptr || pickupWidget == nullptr) return;
+	if (character == nullptr) return;
 
-	pickupWidget->SetVisibility(false);
+	ShowPickupWidget(false);
+	//character->SetOverlappedWeapon(nullptr);
+	
 }
 
 
@@ -72,5 +76,11 @@ void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AWeapon::ShowPickupWidget(bool bShowWidget)
+{
+	if (pickupWidget == nullptr) return;
+	pickupWidget->SetVisibility(bShowWidget);
 }
 
