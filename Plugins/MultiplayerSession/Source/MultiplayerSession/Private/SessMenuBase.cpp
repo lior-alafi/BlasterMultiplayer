@@ -180,7 +180,7 @@ void USessMenuBase::menuSetup(FString lobby,int32 maxConns, FString gameType)
 	//set visible
 	SetVisibility(ESlateVisibility::Visible);
 	//allow set focus on it
-	bIsFocusable = true;
+	SetIsFocusable(true);
 
 	/*
 	we want to set the input mode via PlayerController

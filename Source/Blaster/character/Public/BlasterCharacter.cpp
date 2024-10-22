@@ -11,6 +11,17 @@
 #include "Net/UnrealNetwork.h"
 #include "Blaster/Weapons/Weapon.h"
 
+void ABlasterCharacter::OnRep_OverlappedWeapon(AWeapon* previousOverlappedWeapon)
+{
+	if (OverlappedWeapon)
+	{
+		OverlappedWeapon->ShowPickupWidget(true);
+	}
+	if (previousOverlappedWeapon) {
+		previousOverlappedWeapon->ShowPickupWidget(false);
+	}
+}
+
 // Sets default values
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -84,18 +95,33 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	//register replication variable
-	DOREPLIFETIME(ABlasterCharacter, OverlappedWeapon);
-	//DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappedWeapon, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappedWeapon, COND_OwnerOnly);
+}
+
+void ABlasterCharacter::SetOverlappedWeapon(AWeapon* overlappedWeapon)
+{
+	if (OverlappedWeapon) {
+		OverlappedWeapon->ShowPickupWidget(false);
+	}
+	OverlappedWeapon = overlappedWeapon;
+
+	/*
+	* in our case we bound to this method and call it only from server 
+	* so if IsLocallyControlled() is true then we just show the pickupwidget
+	* 
+	*/
+	if (IsLocallyControlled())
+	{
+		if (overlappedWeapon) {
+			overlappedWeapon->ShowPickupWidget(true);
+		}	
+	}
 }
 
 // Called every frame
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (OverlappedWeapon)
-	{
-		OverlappedWeapon->ShowPickupWidget(true);
-	}
 }
 
 // Called to bind functionality to input

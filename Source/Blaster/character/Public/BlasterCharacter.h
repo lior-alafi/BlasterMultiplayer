@@ -21,8 +21,12 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"))
 	class UWidgetComponent* overheadWidget;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_OverlappedWeapon)
 	class AWeapon* OverlappedWeapon;
+
+	//rep notify 
+	UFUNCTION()
+	void OnRep_OverlappedWeapon(AWeapon* previousOverlappedWeapon);
 
 public:
 	// Sets default values for this character's properties
@@ -52,5 +56,5 @@ public:
 	//OREPLIFETIME(<currentclass>,<replicated class>)
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	FORCEINLINE void SetOverlappedWeapon(AWeapon* overlappedWeapon) { OverlappedWeapon = overlappedWeapon; }
+	void SetOverlappedWeapon(AWeapon* overlappedWeapon);
 };

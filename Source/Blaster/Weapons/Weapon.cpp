@@ -56,8 +56,12 @@ void AWeapon::PickupBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	auto character = Cast<ABlasterCharacter>(OtherActor);
 	if (character == nullptr) return;
-	
+
 	character->SetOverlappedWeapon(this);
+	if (character->IsLocallyControlled())
+	{
+		ShowPickupWidget(true);
+	}
 }
 
 void AWeapon::PickupEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -65,8 +69,12 @@ void AWeapon::PickupEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	auto character = Cast<ABlasterCharacter>(OtherActor);
 	if (character == nullptr) return;
 
-	ShowPickupWidget(false);
+	
 	character->SetOverlappedWeapon(nullptr);
+	if (character->IsLocallyControlled())
+	{
+		ShowPickupWidget(false);
+	}
 	
 }
 
