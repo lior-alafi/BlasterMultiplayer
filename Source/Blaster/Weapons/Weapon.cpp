@@ -45,7 +45,7 @@ void AWeapon::BeginPlay()
 		PickupRadius->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 		//register delegates
 		PickupRadius->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::PickupBeginOverlap);
-		//PickupRadius->OnComponentEndOverlap.AddDynamic(this, &AWeapon::PickupEndOverlap);
+		PickupRadius->OnComponentEndOverlap.AddDynamic(this, &AWeapon::PickupEndOverlap);
 	}
 	if (pickupWidget) {
 		pickupWidget->SetVisibility(false);
@@ -66,7 +66,7 @@ void AWeapon::PickupEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	if (character == nullptr) return;
 
 	ShowPickupWidget(false);
-	//character->SetOverlappedWeapon(nullptr);
+	character->SetOverlappedWeapon(nullptr);
 	
 }
 
