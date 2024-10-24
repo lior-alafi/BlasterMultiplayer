@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Blaster/character/Public/BlasterCharacter.h"
+#include "Net/UnrealNetwork.h"
 
 AWeapon::AWeapon()
 {
@@ -32,6 +33,13 @@ AWeapon::AWeapon()
 
 	pickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupMessage"));
 	pickupWidget->SetupAttachment(SK_Weapon);
+}
+
+void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AWeapon, WeaponState);
+
 }
 
 void AWeapon::BeginPlay()
@@ -78,6 +86,23 @@ void AWeapon::PickupEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	
 }
 
+void AWeapon::OnRep_WeaponState(EWeaponState previousWeaponState)
+{
+	switch (WeaponState)
+	{
+	case EWeaponState::EWS_Equipped:
+		ShowPickupWidget(false);
+		PickupRadius->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	case EWeaponState::EWS_Initial:
+
+		break;
+	case EWeaponState::EWS_Dropped:
+
+		break;
+	}
+}
+
 
 
 void AWeapon::Tick(float DeltaTime)
@@ -90,5 +115,24 @@ void AWeapon::ShowPickupWidget(bool bShowWidget)
 {
 	if (pickupWidget == nullptr) return;
 	pickupWidget->SetVisibility(bShowWidget);
+}
+
+void AWeapon::SetWeaponState(EWeaponState state)
+{
+	WeaponState = state;
+	switch (WeaponState)
+	{
+	case EWeaponState::EWS_Equipped:
+		ShowPickupWidget(false);
+		//stop collision on the server since BlasterCharacter:EquipWeapon happens only on server
+		PickupRadius->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	case EWeaponState::EWS_Initial:
+
+		break;
+	case EWeaponState::EWS_Dropped:
+
+		break;
+	}
 }
 

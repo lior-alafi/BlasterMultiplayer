@@ -17,6 +17,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, Category = Combat)
+	class UCombatComponent* Combat;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"))
 	class UWidgetComponent* overheadWidget;
@@ -38,7 +41,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual void PostInitializeComponents();
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,7 +52,10 @@ protected:
 	virtual void LookUp(float val);
 	virtual void Turn(float val);
 
+	void EquppiedButtonPressed();
 
+	UFUNCTION(Server,Reliable)
+	void ServerEquppiedButtonPressed();
 public:	
 	//to register variables replicated 
 	// to do that:

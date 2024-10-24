@@ -10,6 +10,7 @@
 #include "Blaster/HUD/OverHeadUserWidget.h"
 #include "Net/UnrealNetwork.h"
 #include "Blaster/Weapons/Weapon.h"
+#include "Blaster/Components/CombatComponent.h"
 
 void ABlasterCharacter::OnRep_OverlappedWeapon(AWeapon* previousOverlappedWeapon)
 {
@@ -47,6 +48,12 @@ ABlasterCharacter::ABlasterCharacter()
 	//widget 
 	overheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
 	overheadWidget->SetupAttachment(RootComponent);
+
+	//combat component
+	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	//since combat will have replicated members it must be set as replicated to
+	Combat->SetIsReplicated(true);
+
 }
 
 // Called when the game starts or when spawned
@@ -89,6 +96,31 @@ void ABlasterCharacter::LookUp(float val)
 void ABlasterCharacter::Turn(float val)
 {
 	AddControllerYawInput(val);
+}
+
+void ABlasterCharacter::EquppiedButtonPressed()
+{
+
+	if (Combat) {
+		/*
+		if happens on server player - cool let's equip otherwise call the rpc
+		- it will surely happen on server but will also allow client to equip
+
+		*/
+		if (HasAuthority())
+		{
+			Combat->EquipWeapon(OverlappedWeapon);
+		}
+		else {
+			ServerEquppiedButtonPressed();
+		}
+	}
+}
+
+
+void ABlasterCharacter::ServerEquppiedButtonPressed_Implementation()
+{
+	Combat->EquipWeapon(OverlappedWeapon);
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -135,4 +167,14 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUpDown", this, &ThisClass::LookUp);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ThisClass::Jump);
+	PlayerInputComponent->BindAction("EquipWeap", IE_Pressed, this, &ThisClass::EquppiedButtonPressed);
+}
+
+void ABlasterCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if (Combat)
+	{
+		Combat->Character = this;
+	}
 }

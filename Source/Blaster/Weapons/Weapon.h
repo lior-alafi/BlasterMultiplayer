@@ -28,15 +28,22 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	class USphereComponent* PickupRadius;
 
-	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
+	UPROPERTY(ReplicatedUsing = OnRep_WeaponState,VisibleAnywhere, Category = "Weapon Properties")
 	EWeaponState WeaponState;
+
+	UFUNCTION()
+	void OnRep_WeaponState(EWeaponState previousWeaponState);
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	class UWidgetComponent* pickupWidget;
 public:	
 	// Sets default values for this actor's properties
 	AWeapon();
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void Tick(float DeltaTime) override;
+	
+	void ShowPickupWidget(bool bShowWidget);
+	void SetWeaponState(EWeaponState state);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,8 +65,8 @@ protected:
 		UPrimitiveComponent* OtherComp, 
 		int32 OtherBodyIndex
 	);
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	void ShowPickupWidget(bool bShowWidget);
+
+
+
+
 };
