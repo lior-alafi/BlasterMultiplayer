@@ -5,6 +5,7 @@
 #include "Blaster/character/Public/BlasterCharacter.h"
 #include "Blaster/Weapons/Weapon.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values for this component's properties
@@ -34,6 +35,15 @@ void UCombatComponent::EquipWeapon(AWeapon* weapon)
 	//set weapon ownership to our character
 	EquippedWeapon->SetOwner(Character);
 	EquippedWeapon->ShowPickupWidget(false);
+	bIsAiming = false;
+}
+
+void UCombatComponent::SetAiming(bool aim)
+{
+	//for client immediate results
+	bIsAiming = aim;
+	//to update server
+	ServerSetAiming(aim);
 }
 
 // Called when the game starts
@@ -43,6 +53,11 @@ void UCombatComponent::BeginPlay()
 
 }
 
+void UCombatComponent::ServerSetAiming_Implementation(bool isAiming)
+{
+	bIsAiming = isAiming;
+}
+
 
 
 
@@ -50,5 +65,12 @@ void UCombatComponent::BeginPlay()
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UCombatComponent, EquippedWeapon)
+	DOREPLIFETIME(UCombatComponent, bIsAiming)
 }
 

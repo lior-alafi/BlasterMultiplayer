@@ -21,6 +21,17 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	bool bIsAccelerating;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	bool bIsCrouching;
+
+	UPROPERTY(BlueprintReadOnly,Category="Weapon Status",meta=(AllowPrivateAccess = "true"))
+	bool bWeaponEquipped;
+
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon Status", meta = (AllowPrivateAccess = "true"))
+	bool bIsAiming;
+		
 	UPROPERTY(BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess="true"))
 	class ABlasterCharacter* character;
 

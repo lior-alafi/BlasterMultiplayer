@@ -53,7 +53,7 @@ ABlasterCharacter::ABlasterCharacter()
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	//since combat will have replicated members it must be set as replicated to
 	Combat->SetIsReplicated(true);
-
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 // Called when the game starts or when spawned
@@ -114,9 +114,31 @@ void ABlasterCharacter::EquppiedButtonPressed()
 		else {
 			ServerEquppiedButtonPressed();
 		}
+		
 	}
 }
 
+void ABlasterCharacter::CrouchButtonPressed()
+{
+	if (CanCrouch()) {
+		Crouch();	
+	}
+	else {
+		UnCrouch();
+	}
+}
+
+void ABlasterCharacter::AimButtonPressed()
+{
+	if (Combat == nullptr) return;
+	Combat->SetAiming(true);
+}
+
+void ABlasterCharacter::AimButtonReleased()
+{
+	if (Combat == nullptr) return;
+	Combat->SetAiming(false);
+}
 
 void ABlasterCharacter::ServerEquppiedButtonPressed_Implementation()
 {
@@ -150,6 +172,15 @@ void ABlasterCharacter::SetOverlappedWeapon(AWeapon* overlappedWeapon)
 	}
 }
 
+bool ABlasterCharacter::IsWeaponEquipped() const {
+	return (Combat && Combat->EquippedWeapon);
+}
+
+bool ABlasterCharacter::IsAiming() const
+{
+	return (Combat && Combat->bIsAiming);
+}
+
 // Called every frame
 void ABlasterCharacter::Tick(float DeltaTime)
 {
@@ -168,6 +199,10 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ThisClass::Jump);
 	PlayerInputComponent->BindAction("EquipWeap", IE_Pressed, this, &ThisClass::EquppiedButtonPressed);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ThisClass::CrouchButtonPressed);
+
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ThisClass::AimButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ThisClass::AimButtonReleased);
 }
 
 void ABlasterCharacter::PostInitializeComponents()

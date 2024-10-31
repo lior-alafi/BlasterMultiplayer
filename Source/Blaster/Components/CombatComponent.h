@@ -20,17 +20,33 @@ public:
 	UCombatComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	//friend cause we'll need to access private members and such
 	friend class ABlasterCharacter;
 
 	void EquipWeapon(AWeapon* weapon);
 
+	void SetAiming(bool aim);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	
-
+	UFUNCTION(Server, Reliable)
+	void ServerSetAiming(bool isAiming);
 private:
-    AWeapon* EquippedWeapon; //so we can equip and unequip weapon
-	ABlasterCharacter* Character; //hold the relevant character pointer
+
+	//so we can equip and unequip weapon
+	UPROPERTY(Replicated)
+    AWeapon* EquippedWeapon; 
+
+	UPROPERTY(Replicated)
+	bool bIsAiming;
+	//hold the relevant character pointer
+	ABlasterCharacter* Character; 
+
+
+
+
 };

@@ -52,7 +52,12 @@ protected:
 	virtual void LookUp(float val);
 	virtual void Turn(float val);
 
+
 	void EquppiedButtonPressed();
+	void CrouchButtonPressed();
+
+	void AimButtonPressed();
+	void AimButtonReleased();
 
 	UFUNCTION(Server,Reliable)
 	void ServerEquppiedButtonPressed();
@@ -63,4 +68,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void SetOverlappedWeapon(AWeapon* overlappedWeapon);
+	
+	bool IsWeaponEquipped() const;
+	bool IsAiming() const;
 };

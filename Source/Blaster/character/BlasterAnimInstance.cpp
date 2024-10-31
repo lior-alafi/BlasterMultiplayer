@@ -28,4 +28,10 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsAccelerating = movement->GetCurrentAcceleration().Size() > 0.f;
 	//s.e
 	bIsInAir = movement->IsFalling();
+
+	bWeaponEquipped = character->IsWeaponEquipped();
+
+	bIsCrouching = character->bIsCrouched;
+	
+	bIsAiming = character->IsAiming();
 }	
