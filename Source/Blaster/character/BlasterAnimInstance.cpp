@@ -4,6 +4,17 @@
 #include "BlasterAnimInstance.h"
 #include "Public/BlasterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+
+void UBlasterAnimInstance::strafe()
+{
+	FRotator AimRotation = character->GetBaseAimRotation();
+	//UE_LOG(LogTemp, Warning, TEXT("Aim rotation yaw: %f"), AimRotation.Yaw)
+	FRotator movemenRotation = UKismetMathLibrary::MakeRotFromX(character->GetVelocity());
+	//UE_LOG(LogTemp, Warning, TEXT("movement Rotation yaw: %f"), movemenRotation.Yaw)
+
+	YawOffset = UKismetMathLibrary::NormalizedDeltaRotator(movemenRotation, AimRotation).Yaw;
+}
 
 void UBlasterAnimInstance::NativeInitializeAnimation()
 {
@@ -34,4 +45,6 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsCrouching = character->bIsCrouched;
 	
 	bIsAiming = character->IsAiming();
+
+	strafe();
 }	

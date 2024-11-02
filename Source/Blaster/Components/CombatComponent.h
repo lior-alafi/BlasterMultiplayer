@@ -37,8 +37,13 @@ protected:
 	void ServerSetAiming(bool isAiming);
 private:
 
+	//replicate strafing to all clients
+	UFUNCTION()
+	void OnRep_EquippedWeapon();
+
+
 	//so we can equip and unequip weapon
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing= OnRep_EquippedWeapon)
     AWeapon* EquippedWeapon; 
 
 	UPROPERTY(Replicated)

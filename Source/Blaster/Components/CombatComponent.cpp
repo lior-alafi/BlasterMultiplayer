@@ -6,7 +6,7 @@
 #include "Blaster/Weapons/Weapon.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Net/UnrealNetwork.h"
-
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties
 UCombatComponent::UCombatComponent()
@@ -36,6 +36,9 @@ void UCombatComponent::EquipWeapon(AWeapon* weapon)
 	EquippedWeapon->SetOwner(Character);
 	EquippedWeapon->ShowPickupWidget(false);
 	bIsAiming = false;
+	
+	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+	Character->bUseControllerRotationYaw = true;
 }
 
 void UCombatComponent::SetAiming(bool aim)
@@ -51,6 +54,15 @@ void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+}
+
+//to replicate from server to Autonomous proxy and other client
+void UCombatComponent::OnRep_EquippedWeapon()
+{
+	if (!EquippedWeapon || !Character) return;
+
+	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+	Character->bUseControllerRotationYaw = true;
 }
 
 void UCombatComponent::ServerSetAiming_Implementation(bool isAiming)
