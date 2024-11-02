@@ -6,14 +6,33 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
-void UBlasterAnimInstance::strafe()
+void UBlasterAnimInstance::strafe(float DeltaSeconds)
 {
+
 	FRotator AimRotation = character->GetBaseAimRotation();
 	//UE_LOG(LogTemp, Warning, TEXT("Aim rotation yaw: %f"), AimRotation.Yaw)
 	FRotator movemenRotation = UKismetMathLibrary::MakeRotFromX(character->GetVelocity());
 	//UE_LOG(LogTemp, Warning, TEXT("movement Rotation yaw: %f"), movemenRotation.Yaw)
 
-	YawOffset = UKismetMathLibrary::NormalizedDeltaRotator(movemenRotation, AimRotation).Yaw;
+	//solve jittering passage of strafe animations
+	FRotator DeltaRot = UKismetMathLibrary::NormalizedDeltaRotator(movemenRotation, AimRotation);
+
+	//shortest path interpolation to prevent jittering
+	DeltaRotation = FMath::RInterpTo(DeltaRotation, DeltaRotation, DeltaSeconds, 6.f);
+	YawOffset = DeltaRotation.Yaw;
+}
+
+void UBlasterAnimInstance::lean(float DeltaSeconds)
+{
+	LastFrameCharRotation = CharRotation;
+	CharRotation = character->GetActorRotation();
+	const auto delta = UKismetMathLibrary::NormalizedDeltaRotator(CharRotation, LastFrameCharRotation);
+	//upscale value(it's super tiny)
+	const float target = delta.Yaw / DeltaSeconds; 
+	//interpolate to provide smoother transitions
+	const float interp = FMath::FInterpTo(Lean, target, DeltaSeconds, 6.f);
+	//clamp between values
+	Lean = FMath::Clamp(interp, -90.f, 90.f);
 }
 
 void UBlasterAnimInstance::NativeInitializeAnimation()
@@ -46,5 +65,6 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	
 	bIsAiming = character->IsAiming();
 
-	strafe();
+	strafe(DeltaSeconds);
+	lean(DeltaSeconds);
 }	

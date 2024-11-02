@@ -37,13 +37,22 @@ private:
 	UPROPERTY(BlueprintReadOnly,Category= "Movement", meta = (AllowPrivateAccess="true"))
 	float YawOffset; 
 
-	void strafe();
-	
+	void strafe(float DeltaSeconds);
+	FRotator DeltaRotation;
+
+
+	//lean
 	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float Lean;
+	  
+	void lean(float DeltaSeconds);
 
+	FRotator LastFrameCharRotation;
+	FRotator CharRotation;
+	//s.e
 	UPROPERTY(BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess="true"))
 	class ABlasterCharacter* character;
+
 
 public:
 	virtual void NativeInitializeAnimation() override;
