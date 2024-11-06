@@ -45,15 +45,23 @@ void UCombatComponent::SetAiming(bool aim)
 {
 	//for client immediate results
 	bIsAiming = aim;
+	if (Character) {
+		Character->GetCharacterMovement()->MaxWalkSpeed = aim ? MaxAimWalkSpeed : MaxBaseWalkSpeed;
+	}
+	//
 	//to update server
 	ServerSetAiming(aim);
+
+	UE_LOG(LogTemp, Warning, TEXT("is aiming: %s"), bIsAiming ? TEXT("true") : TEXT("false"));
 }
 
 // Called when the game starts
 void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	if (Character) {
+		Character->GetCharacterMovement()->MaxWalkSpeed =  MaxBaseWalkSpeed;
+	}
 }
 
 //to replicate from server to Autonomous proxy and other client
@@ -68,6 +76,9 @@ void UCombatComponent::OnRep_EquippedWeapon()
 void UCombatComponent::ServerSetAiming_Implementation(bool isAiming)
 {
 	bIsAiming = isAiming;
+	if (Character) {
+		Character->GetCharacterMovement()->MaxWalkSpeed = isAiming ? MaxAimWalkSpeed : MaxBaseWalkSpeed;
+	}
 }
 
 

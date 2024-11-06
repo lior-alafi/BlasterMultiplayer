@@ -48,6 +48,12 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bIsAiming;
+
+	UPROPERTY(EditAnywhere)
+	float MaxAimWalkSpeed = 460.f;
+
+	UPROPERTY(EditAnywhere)
+	float MaxBaseWalkSpeed = 600.f;
 	//hold the relevant character pointer
 	ABlasterCharacter* Character; 
 
