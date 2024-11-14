@@ -29,14 +29,14 @@ void ABlasterCharacter::CalculateAimOffset(float deltaTime)
 	float Speed = GetVelocity().Size();
 	FRotator currentAimRotator = GetBaseAimRotation();
 
-	if (Speed > 0.f) {
+	if (Speed > 0.f || GetCharacterMovement()->IsFalling()) {
 
 		bUseControllerRotationYaw = true;
 		LastAimRotator = currentAimRotator;
 		OffsetYaw = 0.f;
 		
 	}
-	else {
+	else if(Speed == 0.f && !GetCharacterMovement()->IsFalling()) {
 		bUseControllerRotationYaw = false;
 
 		FRotator lastYaw = FRotator{ 0.f,LastAimRotator.Yaw,0.f };
@@ -44,6 +44,14 @@ void ABlasterCharacter::CalculateAimOffset(float deltaTime)
 		OffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(currYaw, lastYaw).Yaw;
 	}
 	OffsetPitch = currentAimRotator.Pitch;
+	/*since rotators are compressed to 16byte pitch value range is[0, 360]
+	 (it's fine locally) so let's map [270,360) range to [-90,0)
+	*/
+
+	if (!IsLocallyControlled() && OffsetPitch > 90.f) {
+		FVector2D InputRange{ 270.f,360.f }, OutputRange{ -90.f,0.f };
+		OffsetPitch = FMath::GetMappedRangeValueClamped(InputRange, OutputRange, OffsetPitch);
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("yaw: %f, pitch: %f"), OffsetYaw, OffsetPitch);
 }
