@@ -27,9 +27,17 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappedWeapon)
 	class AWeapon* OverlappedWeapon;
 
+	UPROPERTY(Replicated)
+	float OffsetYaw;
+
+	UPROPERTY(Replicated)
+	float OffsetPitch;
 	//rep notify 
 	UFUNCTION()
 	void OnRep_OverlappedWeapon(AWeapon* previousOverlappedWeapon);
+
+	void CalculateAimOffset(float deltaTime);
+	FRotator LastAimRotator;
 
 public:
 	// Sets default values for this character's properties
@@ -71,4 +79,7 @@ public:
 	
 	bool IsWeaponEquipped() const;
 	bool IsAiming() const;
+
+	float GetAimOffsetYaw() const;
+	float GetAimOffsetPitch() const;
 };

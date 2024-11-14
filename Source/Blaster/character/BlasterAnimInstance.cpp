@@ -67,4 +67,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	strafe(DeltaSeconds);
 	lean(DeltaSeconds);
+
+	AO_Yaw = character->GetAimOffsetYaw();
+	AO_Pitch = character->GetAimOffsetPitch();
 }	

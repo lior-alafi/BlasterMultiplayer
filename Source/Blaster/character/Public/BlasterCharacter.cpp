@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+	// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "BlasterCharacter.h"
@@ -11,6 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Blaster/Weapons/Weapon.h"
 #include "Blaster/Components/CombatComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void ABlasterCharacter::OnRep_OverlappedWeapon(AWeapon* previousOverlappedWeapon)
 {
@@ -22,6 +23,31 @@ void ABlasterCharacter::OnRep_OverlappedWeapon(AWeapon* previousOverlappedWeapon
 		previousOverlappedWeapon->ShowPickupWidget(false);
 	}
 }
+
+void ABlasterCharacter::CalculateAimOffset(float deltaTime)
+{
+	float Speed = GetVelocity().Size();
+	FRotator currentAimRotator = GetBaseAimRotation();
+
+	if (Speed > 0.f) {
+
+		bUseControllerRotationYaw = true;
+		LastAimRotator = currentAimRotator;
+		OffsetYaw = 0.f;
+		
+	}
+	else {
+		bUseControllerRotationYaw = false;
+
+		FRotator lastYaw = FRotator{ 0.f,LastAimRotator.Yaw,0.f };
+		FRotator currYaw = FRotator{ 0.f,currentAimRotator.Yaw,0.f };
+		OffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(currYaw, lastYaw).Yaw;
+	}
+	OffsetPitch = currentAimRotator.GetDenormalized().Pitch;
+
+	UE_LOG(LogTemp, Warning, TEXT("yaw: %f, pitch: %f"), OffsetYaw, OffsetPitch);
+}
+
 
 // Sets default values
 ABlasterCharacter::ABlasterCharacter()
@@ -181,10 +207,22 @@ bool ABlasterCharacter::IsAiming() const
 	return (Combat && Combat->bIsAiming);
 }
 
+float ABlasterCharacter::GetAimOffsetYaw() const
+{
+	return OffsetYaw;
+}
+
+float ABlasterCharacter::GetAimOffsetPitch() const
+{
+	return OffsetPitch;
+}
+
 // Called every frame
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CalculateAimOffset(DeltaTime);
 }
 
 // Called to bind functionality to input

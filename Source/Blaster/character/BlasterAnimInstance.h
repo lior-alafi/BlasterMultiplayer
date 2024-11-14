@@ -33,6 +33,11 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon Status", meta = (AllowPrivateAccess = "true"))
 	bool bIsAiming;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon Status", meta = (AllowPrivateAccess = "true"))
+	float AO_Yaw;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon Status", meta = (AllowPrivateAccess = "true"))
+	float AO_Pitch;
 	// strafe
 	UPROPERTY(BlueprintReadOnly,Category= "Movement", meta = (AllowPrivateAccess="true"))
 	float YawOffset; 
