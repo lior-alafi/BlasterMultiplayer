@@ -43,7 +43,7 @@ void ABlasterCharacter::CalculateAimOffset(float deltaTime)
 		FRotator currYaw = FRotator{ 0.f,currentAimRotator.Yaw,0.f };
 		OffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(currYaw, lastYaw).Yaw;
 	}
-	OffsetPitch = currentAimRotator.GetDenormalized().Pitch;
+	OffsetPitch = currentAimRotator.Pitch;
 
 	UE_LOG(LogTemp, Warning, TEXT("yaw: %f, pitch: %f"), OffsetYaw, OffsetPitch);
 }

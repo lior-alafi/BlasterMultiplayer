@@ -27,10 +27,10 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappedWeapon)
 	class AWeapon* OverlappedWeapon;
 
-	UPROPERTY(Replicated)
+	//UPROPERTY(Replicated)
 	float OffsetYaw;
 
-	UPROPERTY(Replicated)
+	//UPROPERTY(Replicated)
 	float OffsetPitch;
 	//rep notify 
 	UFUNCTION()
