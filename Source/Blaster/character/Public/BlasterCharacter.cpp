@@ -29,19 +29,26 @@ void ABlasterCharacter::CalculateAimOffset(float deltaTime)
 	float Speed = GetVelocity().Size();
 	FRotator currentAimRotator = GetBaseAimRotation();
 
-	if (Speed > 0.f || GetCharacterMovement()->IsFalling()) {
+	if (Speed > 0.f || GetCharacterMovement()->IsFalling()) 
+	{
 
 		bUseControllerRotationYaw = true;
 		LastAimRotator = currentAimRotator;
 		OffsetYaw = 0.f;
-		
+
+		// +++ reset Turning in place ADDED +++
+		TurningInPlace = ETurningInPlace::ETIP_NoRotation;
 	}
-	else if(Speed == 0.f && !GetCharacterMovement()->IsFalling()) {
+	else if(Speed == 0.f && !GetCharacterMovement()->IsFalling())
+	{
 		bUseControllerRotationYaw = false;
 
 		FRotator lastYaw = FRotator{ 0.f,LastAimRotator.Yaw,0.f };
 		FRotator currYaw = FRotator{ 0.f,currentAimRotator.Yaw,0.f };
 		OffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(currYaw, lastYaw).Yaw;
+
+		// +++ update Turning in place ADDED +++
+		TurnInPlace(deltaTime);
 	}
 	OffsetPitch = currentAimRotator.Pitch;
 	/*since rotators are compressed to 16byte pitch value range is[0, 360]
@@ -54,6 +61,18 @@ void ABlasterCharacter::CalculateAimOffset(float deltaTime)
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("yaw: %f, pitch: %f"), OffsetYaw, OffsetPitch);
+}
+
+void ABlasterCharacter::TurnInPlace(float DeltaTime)
+{
+	if (90.f < OffsetYaw)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Right;
+	}
+	else if (OffsetYaw < -90.f)
+	{
+		TurningInPlace =  ETurningInPlace::ETIP_Left;
+	}
 }
 
 
@@ -88,6 +107,8 @@ ABlasterCharacter::ABlasterCharacter()
 	//since combat will have replicated members it must be set as replicated to
 	Combat->SetIsReplicated(true);
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+
+	TurningInPlace = ETurningInPlace::ETIP_NoRotation;
 }
 
 // Called when the game starts or when spawned

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Blaster/Models/TurningInPlace.h"
 #include "BlasterAnimInstance.generated.h"
 
 /**
@@ -64,7 +65,8 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess="true"))
 	class ABlasterCharacter* character;
 
-	
+	UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	ETurningInPlace TurningInPlace;
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

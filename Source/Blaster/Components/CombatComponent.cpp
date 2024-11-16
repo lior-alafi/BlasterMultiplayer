@@ -52,7 +52,6 @@ void UCombatComponent::SetAiming(bool aim)
 	//to update server
 	ServerSetAiming(aim);
 
-	UE_LOG(LogTemp, Warning, TEXT("is aiming: %s"), bIsAiming ? TEXT("true") : TEXT("false"));
 }
 
 // Called when the game starts

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Blaster/Models/TurningInPlace.h"
 #include "BlasterCharacter.generated.h"
 
 UCLASS()
@@ -38,6 +39,9 @@ private:
 
 	void CalculateAimOffset(float deltaTime);
 	FRotator LastAimRotator;
+
+	ETurningInPlace TurningInPlace;
+	void TurnInPlace(float DeltaTime);
 
 public:
 	// Sets default values for this character's properties
@@ -84,4 +88,6 @@ public:
 	float GetAimOffsetPitch() const;
 
 	AWeapon* GetEquippedWeapon();
+
+	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
 };

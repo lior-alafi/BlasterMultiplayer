@@ -98,4 +98,6 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 
 	handleWeaponHolding(DeltaSeconds);
+
+	TurningInPlace = character->GetTurningInPlace();
 }	
