@@ -82,4 +82,6 @@ public:
 
 	float GetAimOffsetYaw() const;
 	float GetAimOffsetPitch() const;
+
+	AWeapon* GetEquippedWeapon();
 };

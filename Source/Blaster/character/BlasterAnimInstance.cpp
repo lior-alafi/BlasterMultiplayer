@@ -5,6 +5,8 @@
 #include "Public/BlasterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Blaster/Weapons/Weapon.h"
+#include "Components/SkinnedMeshComponent.h"
 
 void UBlasterAnimInstance::strafe(float DeltaSeconds)
 {
@@ -33,6 +35,29 @@ void UBlasterAnimInstance::lean(float DeltaSeconds)
 	const float interp = FMath::FInterpTo(Lean, target, DeltaSeconds, 6.f);
 	//clamp between values
 	Lean = FMath::Clamp(interp, -90.f, 90.f);
+}
+
+void UBlasterAnimInstance::handleWeaponHolding(float DeltaSeconds)
+{
+	currentWeapon = character->GetEquippedWeapon();
+	//handle Fabrik IK to fix Left hand position on weapon
+	if (bWeaponEquipped)
+	{
+		
+		if (currentWeapon == nullptr ||
+			character->GetMesh() == nullptr ||
+			currentWeapon->GetWeaponMesh() == nullptr) return;
+
+		LeftHandTransform = currentWeapon->GetWeaponMesh()->GetSocketTransform(FName("LeftHandSocket"),ERelativeTransformSpace::RTS_World);
+		//turn it back to bone space, hand_r is the reference for location and rotation for the ik
+		FVector OutPosition;
+		FRotator OutRotation;
+		character->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, 
+			OutPosition, OutRotation);
+		LeftHandTransform.SetLocation(OutPosition);
+		LeftHandTransform.SetRotation(FQuat(OutRotation));
+
+	}
 }
 
 void UBlasterAnimInstance::NativeInitializeAnimation()
@@ -70,4 +95,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	AO_Yaw = character->GetAimOffsetYaw();
 	AO_Pitch = character->GetAimOffsetPitch();
+
+
+	handleWeaponHolding(DeltaSeconds);
 }	

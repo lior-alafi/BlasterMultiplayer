@@ -44,6 +44,8 @@ public:
 	
 	void ShowPickupWidget(bool bShowWidget);
 	void SetWeaponState(EWeaponState state);
+
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return SK_Weapon; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

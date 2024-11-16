@@ -54,6 +54,12 @@ private:
 
 	FRotator LastFrameCharRotation;
 	FRotator CharRotation;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon Status", meta = (AllowPrivateAccess = "true"))
+	FTransform 	LeftHandTransform;
+	void handleWeaponHolding(float DeltaSeconds);
+
+	class AWeapon* currentWeapon;
 	//s.e
 	UPROPERTY(BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess="true"))
 	class ABlasterCharacter* character;
