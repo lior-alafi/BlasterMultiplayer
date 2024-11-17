@@ -31,23 +31,28 @@ void ABlasterCharacter::CalculateAimOffset(float deltaTime)
 
 	if (Speed > 0.f || GetCharacterMovement()->IsFalling()) 
 	{
-
+		// +++ changed to true ADDED +++
 		bUseControllerRotationYaw = true;
+
 		LastAimRotator = currentAimRotator;
 		OffsetYaw = 0.f;
 
-		// +++ reset Turning in place ADDED +++
 		TurningInPlace = ETurningInPlace::ETIP_NoRotation;
 	}
 	else if(Speed == 0.f && !GetCharacterMovement()->IsFalling())
 	{
-		bUseControllerRotationYaw = false;
+		bUseControllerRotationYaw = true;
 
 		FRotator lastYaw = FRotator{ 0.f,LastAimRotator.Yaw,0.f };
 		FRotator currYaw = FRotator{ 0.f,currentAimRotator.Yaw,0.f };
 		OffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(currYaw, lastYaw).Yaw;
+		
+		// +++ initialize it ADDED +++
+		if (TurningInPlace == ETurningInPlace::ETIP_NoRotation) {
+			InterpAO_Yaw = OffsetYaw;
+		}
+	
 
-		// +++ update Turning in place ADDED +++
 		TurnInPlace(deltaTime);
 	}
 	OffsetPitch = currentAimRotator.Pitch;
@@ -72,6 +77,19 @@ void ABlasterCharacter::TurnInPlace(float DeltaTime)
 	else if (OffsetYaw < -90.f)
 	{
 		TurningInPlace =  ETurningInPlace::ETIP_Left;
+	}
+
+	//if we are turning interpolate interpAO +++ADDED
+	if (TurningInPlace != ETurningInPlace::ETIP_NoRotation) {
+		InterpAO_Yaw = FMath::FInterpTo(InterpAO_Yaw, 0.f, DeltaTime, RotationInterpolationRate);
+		OffsetYaw = InterpAO_Yaw;
+		//check if we should reset turn
+		if (FMath::Abs(OffsetYaw) < 15.f)
+		{
+			TurningInPlace = ETurningInPlace::ETIP_NoRotation;
+			//reset aim rotation
+			LastAimRotator = GetBaseAimRotation();
+		}
 	}
 }
 

@@ -28,11 +28,11 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappedWeapon)
 	class AWeapon* OverlappedWeapon;
 
-	//UPROPERTY(Replicated)
+	
+	//Aim Offset 
 	float OffsetYaw;
-
-	//UPROPERTY(Replicated)
 	float OffsetPitch;
+
 	//rep notify 
 	UFUNCTION()
 	void OnRep_OverlappedWeapon(AWeapon* previousOverlappedWeapon);
@@ -42,6 +42,11 @@ private:
 
 	ETurningInPlace TurningInPlace;
 	void TurnInPlace(float DeltaTime);
+	//used for interpolation of offsetYaw when we rotate beyond +-90
+	float InterpAO_Yaw;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float RotationInterpolationRate = 5.f;
 
 public:
 	// Sets default values for this character's properties
