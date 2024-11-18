@@ -127,6 +127,9 @@ ABlasterCharacter::ABlasterCharacter()
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 
 	TurningInPlace = ETurningInPlace::ETIP_NoRotation;
+
+	NetUpdateFrequency = 66.f;
+	MinNetUpdateFrequency = 35.f;
 }
 
 // Called when the game starts or when spawned
